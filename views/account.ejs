@@ -1,0 +1,10 @@
+<% include head %>
+<% include menu %>
+<h2> Zalogowany jako: <b><%= req.user.username %> </b></h2> 
+
+<ul>
+<li>Twoje zakłady</li>
+<li><a href="/logout">Wyloguj się</a></li>
+</ul>
+<% include footer %>
+

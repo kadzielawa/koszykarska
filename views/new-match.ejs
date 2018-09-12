@@ -1,0 +1,28 @@
+<% include head %>
+<% include menu %>   
+
+<h2>ADMIN PAGE</h2>
+
+<form method="post">
+	<p>Data: <input type="text" name="date"></p>
+	<p>Drużyna 1:   <input list="team1" name="team1">
+  <datalist id="team1">
+    <% for(var i=0; i < teams.length; i++) { %>
+   		<option value="<%= teams[i].name%>">
+   	<% } %>
+  </datalist>
+  </p>
+	Drużyna 2:   <input list="team2" name="team2">
+  <p>
+  <datalist id="team2">
+   <% for(var i=0; i < teams.length; i++) { %>
+   		<option value="<%= teams[i].name%>">
+   	<% } %>
+  </datalist>
+    </p>
+	<input type="submit" value="zapisz">
+</form>
+
+<% include footer %>
+
+<% include layout_end %>

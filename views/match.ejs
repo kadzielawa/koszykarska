@@ -1,0 +1,96 @@
+<% include head %>
+ 	<script>
+      var socket = io();
+      var score = new Audio("/sounds/score.WAV");
+      var freeThrows = new Audio("/sounds/free_throw.wav");
+      var endOfQuarte = new Audio("/sounds/end_of_quarte.mp3");
+      var timeTaken = new Audio("/sounds/time_taken.wav");
+      var startMatch = new Audio("/sounds/start_match.WAV");
+      socket.on('results', function(results){
+        results.forEach(function(a,b) {
+        if(a.id == $("#match_id").val())
+        {
+        	$("#match_t1_"+a.id).text(a.team1.name);
+        	$("#match_t2_"+a.id).text(a.team2.name);
+        	if(!a.result1)
+        		a.result1 = 0;
+        	if(!a.result2)
+        		a.result2 = 0;
+        	$("#match_res1_"+a.id).text(a.result1);
+        	$("#match_res2_"+a.id).text(a.result2);
+        	$("#match_min_"+a.id).text(a.minute);
+        	$("#match_sec_"+a.id).text(a.second);
+        	$("#match_date_"+a.id).text(a.date);
+        	
+        	if (isEmpty($('.match-live-box'))) {
+        		a.events.forEach(function(a,b) {
+        			$(".match-live-box").prepend("<p> <b>[" + a.minute + ":" + a.second + "] </b>" + a.message + "</p>")	
+        		});
+			}
+        	if(typeof countOfEvents == 'undefined')
+        		countOfEvents = 0;
+
+        	if(countOfEvents != a.events.length)
+        	{
+        	  	//obsluga dzwieku
+        		if(a.events[a.events.length -1].type == 'score')
+        		{
+	        		score.play();
+        		}
+        		if(a.events[a.events.length -1].type == 'freeThrows')
+        		{
+	        		freeThrows.play();
+        		}
+        		if(a.events[a.events.length -1].type == 'endOfQuarte')
+        		{
+        			endOfQuarte.play();
+         		}
+         		if(a.events[a.events.length -1].type == 'timeTaken')
+        		{
+        			timeTaken.play();
+         		}
+         		$(".match-live-box").prepend("<p> <b>[" + a.minute + ":" + a.second + "] </b>" + a.events[a.events.length - 1].message + "</p>")
+        	}
+         	countOfEvents = a.events.length;
+         }
+        });
+        });
+	function isEmpty( el ){
+	      return !$.trim(el.html())
+	  }
+
+	</script>
+<% include menu %>
+<div class="match_summary">
+	<div class="time_box"><span id="match_min_<%= match_id %>"></span>:<span id="match_sec_<%= match_id %>"></span> </div>
+	<div class="team">
+		<div class="team_logo">
+			<img src="/images/Los_Angeles_Clippers_Logo.png"/>
+		</div>
+		<div class="team_result">
+			<span id="match_res1_<%= match_id %>"></span>
+		</div>
+	</div>
+
+	<div class="versus">vs.</div>
+
+	<div class="team">
+		<div class="team_logo">
+			<img src="/images/Chicago_Bulls_logo.png"/>
+		</div>
+		<div class="team_result">
+			<span id="match_res2_<%= match_id %>"></span>
+		</div>
+	</div>
+</div>
+<div style="clear:both;"/>
+<hr>
+<input type="hidden" value="<%= match_id%>" id="match_id">
+<h3>Relacja live:</h3>
+<div class="match-live-box">
+	
+</div>
+
+<% include layout_end %>
+
+<% include footer %>

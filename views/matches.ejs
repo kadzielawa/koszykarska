@@ -1,0 +1,70 @@
+<% include menu %>
+
+<% include head %>
+<script>
+
+function checkAndAddMatch(arrayMatch,match) {
+	var lengthOfArray = arrayMatch.length;
+	if(arrayMatch.length == 0) {
+ 		arrayMatch.push(match);
+ 		return;
+ 	}
+
+ 	for (var i = arrayMatch.length - 1; i >= 0; i--) {
+ 		if(arrayMatch[i].id === match.id)
+ 			return;
+ 		if(i === 0)
+			arrayMatch.push(match);
+
+ 	};
+}
+
+ var socket = io();
+ var matchLives = [];
+ var matchPending = [];
+
+Array.observe(matchLives,function(changes) {
+	changes.forEach(function(a){
+		var match = a.object[a.index];
+		var html = "<li><a href='/match/"+ match.id+"'>" + match.team1.name +" vs. "+ match.team2.name +"</a></li>";
+		$(".matches_live").prepend(html);
+
+	});
+});
+
+Array.observe(matchPending,function(changes) {
+	changes.forEach(function(a){
+		var match = a.object[a.index];
+		var html = "<li><a href='/match/"+ match.id+"'>" + match.team1.name +" vs. "+ match.team2.name +"</a></li>";
+		$(".matches_pending").prepend(html);
+
+	});
+});
+
+ socket.on('results', function(results){
+ 	results.forEach(function(a,b) {
+ 		if(a.active)
+			checkAndAddMatch(matchLives,a);
+		else
+			checkAndAddMatch(matchPending,a);
+	});
+ 	});
+
+</script>
+<h2>Trwające</h2>
+<hr>
+
+<ul class="matches_live">
+
+
+</ul>
+<h2>Oczekujące</h2>
+<hr>
+
+<ul class="matches_pending">
+
+
+</ul>
+<% include footer %>
+
+<% include layout_end %>
